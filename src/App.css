@@ -1,28 +1,51 @@
-.App {
+
+/*Search container code*/
+.search-container {
+  margin: 10px;
+}
+
+
+
+/*card container code*/
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+
+/*individual card code*/
+.event-container {
+  font-size: 14px;
+  border-width: thin;
+  border-style: solid;
+  border-color: black;
+  margin: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+.event-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.event-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 2px;
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.card-heading {
+  font-weight: bold;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
 
-.App-title {
-  font-size: 1.5em;
-}
+/*Maps*/
 
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.map-marker {
+  height: 40px;
+  cursor: pointer;
 }
