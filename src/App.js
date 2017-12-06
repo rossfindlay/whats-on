@@ -37,13 +37,14 @@ class App extends Component {
     showSearchContainer: true,
     mapZoom: [1],
     mapCenter: [0, 0],
-    eventLocations: {}
+    eventLocations: {},
+    searchAddress: "Sydney, New South Wales, Australia"
 
 
   }
 
   handleSearch() {
-    this.getLatLng(this.childRefs.cityInput.value)
+    this.getLatLng(this.state.searchAddress)
       .then(latlngResponse => {
       return this.getTimezone(latlngResponse)
       .then(timezoneResponse => ({
@@ -59,10 +60,19 @@ class App extends Component {
     this.childRefs[name] = ref;
   }
 
+  convertAddressString = (address) => {
+    console.log(`old address ${address}`)
+    const newAddress = address.replace(/\s+/g, '+')
+    console.log(`new address ${newAddress}`)
+    return newAddress
+  }
+
   getLatLng(city) {
-    return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${city}&key=AIzaSyAzrOM7kAMzsw20ihiShOBu13sN3wf-5Hw`)
+    const searchCity = this.convertAddressString(city)
+    return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${searchCity}&key=AIzaSyAzrOM7kAMzsw20ihiShOBu13sN3wf-5Hw`)
       .then(response => response.json())
       .then(data => {
+        console.log(data.results[0])
       this.setState({
         latlng: data.results[0].geometry.location
       })
@@ -152,6 +162,10 @@ class App extends Component {
       })
   }
 
+  handleAddressChange = (address) => {
+    this.setState({searchAddress: address})
+  }
+
   render() {
     return (
       <div>
@@ -160,6 +174,8 @@ class App extends Component {
             ticketmasterParameters={this.state.ticketmasterParameters}
             getSearchRef={this.getSearchRef}
             onSubmitClick={this.handleSearch}
+            searchAddress={this.state.searchAddress}
+            onChangeAddress={this.handleAddressChange}
           />
         ) : null}
         {!this.state.showSearchContainer ? <div><button onClick={this.toggleSearch}>Return to search</button></div> : null}

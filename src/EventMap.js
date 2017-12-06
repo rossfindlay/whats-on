@@ -39,14 +39,14 @@ class EventMap extends Component {
           width: "500px"
         }}
       >
+        <MapMarker
+          ticketmasterSearchResults={this.props.ticketmasterSearchResults}
+          onMarkerClick={this.handleMarkerClick}
+        />
         <MapPopup
           ticketmasterSearchResults={this.props.ticketmasterSearchResults}
           latlng={this.props.latlng}
           popupEvent={this.state.popupEvent}
-        />
-        <MapMarker
-          ticketmasterSearchResults={this.props.ticketmasterSearchResults}
-          onMarkerClick={this.handleMarkerClick}
         />
       </Map>
     </div>
