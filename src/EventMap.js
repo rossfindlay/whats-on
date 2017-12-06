@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-import mapboxgl from 'mapbox-gl';
-import ReactMapboxGl, { Layer, Feature } from "react-mapbox-gl";
+import ReactMapboxGl from "react-mapbox-gl";
 import MapMarker from './MapMarker'
 import MapPopup from './MapPopup'
 
@@ -15,18 +14,9 @@ class EventMap extends Component {
     this.handleMarkerClick = this.handleMarkerClick.bind(this)
   }
   state = {
-    popupId: "",
+    popupEvent: "",
 
   }
-
-  // componentDidMount() {
-  //   if(this.props.latlng.lng) {
-  //     this.setState({
-  //       mapZoom: [10],
-  //       mapCenter: [this.props.latlng.lng, this.props.latlng.lat]
-  //     })
-  //   }
-  // }
 
   handleMarkerClick(eventId) {
     const event = this.props.ticketmasterSearchResults.find(event => event.id === eventId)

@@ -1,28 +1,22 @@
 import React, { Component } from 'react';
 import geohash from 'ngeohash'
 import PropTypes from 'prop-types'
-import moment from 'moment'
 
-import Card from './Card'
 import EventMap from './EventMap'
+import SearchContainer from './SearchContainer'
+import CardContainer from './CardContainer'
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props)
-
-
-
-
-
-
+    this.childRefs = {};
     this.getTicketmasterFeed = this.getTicketmasterFeed.bind(this)
 
+    this.getSearchRef = this.getSearchRef.bind(this)
     this.getLatLng = this.getLatLng.bind(this)
     this.getGeoHash = this.getGeoHash.bind(this)
     this.getTimezone = this.getTimezone.bind(this)
-
-    this.addEventLocationsToMap = this.addEventLocationsToMap.bind(this)
 
     this.handleSearch = this.handleSearch.bind(this)
     this.toggleMap = this.toggleMap.bind(this)
@@ -37,16 +31,10 @@ class App extends Component {
       endDateTime: "y",
     },
     ticketmasterSearchResults: [],
-    searchParameters: {
-      searchCity: "",
-      searchCategory: "",
-      searchRadius: "",
-      searchUnit: "",
-      searchStartDate: "",
-      searchEndDate: "",
-    },
     latlng: {},
     showMap: false,
+    showCards: true,
+    showSearchContainer: true,
     mapZoom: [1],
     mapCenter: [0, 0],
     eventLocations: {}
@@ -55,27 +43,26 @@ class App extends Component {
   }
 
   handleSearch() {
-    this.getLatLng(this.cityInput.value)
-      .then(latlng => {
-        return (
-          {
-            timezone: this.getTimezone(latlng).then(timezone => {
-              return timezone
-            }),
-            geoHash: this.getGeoHash(latlng),
-          }
-        )
-      })
-      .then(results => {
-        this.getTicketmasterFeed(results.geoHash)
-      })
+    this.getLatLng(this.childRefs.cityInput.value)
+      .then(latlngResponse => {
+      return this.getTimezone(latlngResponse)
+      .then(timezoneResponse => ({
+        timezone: timezoneResponse,
+        geoHash: this.getGeoHash(latlngResponse)
+      }))
+    }).then(({timezone, geoHash}) => {
+      this.getTicketmasterFeed(geoHash)
+    })
+  }
+
+  getSearchRef(name, ref) {
+    this.childRefs[name] = ref;
   }
 
   getLatLng(city) {
     return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${city}&key=AIzaSyAzrOM7kAMzsw20ihiShOBu13sN3wf-5Hw`)
       .then(response => response.json())
       .then(data => {
-      console.log(data.results[0].geometry.location)
       this.setState({
         latlng: data.results[0].geometry.location
       })
@@ -91,14 +78,13 @@ class App extends Component {
     return fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${latlng.lat},${latlng.lng}&timestamp=1510657192&key=AIzaSyAzrOM7kAMzsw20ihiShOBu13sN3wf-5Hw`)
       .then(response => response.json())
       .then(data => {
-        console.log(data)
         return data.rawOffset
       })
   }
 
 
   getTicketmasterFeed(geoHash) {
-    fetch(`https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=${geoHash}&classificationName=${this.selectedCategory.value}&startDateTime=${this.startDateInput.value}T00:00:00Z&endDateTime=${this.endDateInput.value}T23:59:00Z&radius=${this.selectedRadius.value}&unit=${this.selectedUnit.value}&size=100&page=0&sort=distance,asc&apikey=CsKQV0dhEPsfnwKyLuc6nmeQEfKyLrfe`)
+    fetch(`https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=${geoHash}&classificationName=${this.childRefs.selectedCategory.value}&startDateTime=${this.childRefs.startDateInput.value}T00:00:00Z&endDateTime=${this.childRefs.endDateInput.value}T23:59:00Z&radius=${this.childRefs.selectedRadius.value}&unit=${this.childRefs.selectedUnit.value}&size=100&page=0&sort=distance,asc&apikey=CsKQV0dhEPsfnwKyLuc6nmeQEfKyLrfe`)
       .then(results => results.json())
       .then(results => {
         console.log(results)
@@ -127,9 +113,8 @@ class App extends Component {
           this.setState({
             ticketmasterSearchResults: events,
             mapZoom: [10],
-            mapCenter: [this.state.latlng.lng, this.state.latlng.lat]
-          }, () => {
-            this.addEventLocationsToMap()
+            mapCenter: [this.state.latlng.lng, this.state.latlng.lat],
+            showSearchContainer: false,
           })
         } else {
           return console.log('no results')
@@ -148,70 +133,45 @@ class App extends Component {
   toggleMap() {
     this.state.showMap ?
       this.setState({
-        showMap: false
+        showMap: false,
+        showCards: true
       }) :
       this.setState({
-        showMap: true
+        showMap: true,
+        showCards: false
       })
   }
 
-  // addEventLocationsToMap() {
-  //   const locations = {
-  //     type: 'FeatureCollection',
-  //     features: this.state.ticketmasterSearchResults.map(result => {
-  //     return (
-  //       {
-  //         type: 'Feature',
-  //         geometry: {
-  //           type: 'Point',
-  //           coordinates: [result.venueLocation[0].longitude, result.venueLocation[0].latitude],
-  //         },
-  //         properties: {
-  //           title: result.name,
-  //           description: 'test'
-  //         }
-  //       }
-  //     )
-  //     })
-  //   }
-  //   this.setState({
-  //     eventLocations: locations
-  //   })
-  // }
-
+  toggleSearch = () => {
+    this.state.showSearchContainer ?
+      this.setState({
+        showSearchContainer: false
+      }) :
+      this.setState({
+        showSearchContainer: true,
+      })
+  }
 
   render() {
     return (
       <div>
-        <div className="search-container">
-          <input type="text" ref={ref => this.cityInput = ref} defaultValue="Sydney"/>
-          <input type="date" ref={ref => this.startDateInput = ref} defaultValue="2017-12-10"/>
-          <input type="date" ref={ref => this.endDateInput = ref} defaultValue="2017-12-20"/>
-          <select ref={ref => this.selectedCategory = ref} defaultValue="sports">
-            {this.state.ticketmasterParameters.category.map(category => <option key={category}>{category}</option>)}
-          </select>
-          <select ref={ref => this.selectedRadius = ref} defaultValue="25">
-            {this.state.ticketmasterParameters.radius.map(radius => <option key={radius}>{radius}</option>)}
-          </select>
-          <select ref={ref => this.selectedUnit = ref}>
-            {this.state.ticketmasterParameters.unit.map(unit => <option key={unit}>{unit}</option>)}
-          </select>
-          <button onClick={this.handleSearch}>Submit</button>
-        </div>
-        <div><button onClick={this.toggleMap}>Toggle Map</button></div>
-        <div className="card-container">
-          {this.state.ticketmasterSearchResults.map(event => {
-            return (
-              <Card
-                {...event}
-                key={event.id}
-              />
-            )
-          })
-          }
-        </div>
+        {this.state.showSearchContainer ? (
+          <SearchContainer
+            ticketmasterParameters={this.state.ticketmasterParameters}
+            getSearchRef={this.getSearchRef}
+            onSubmitClick={this.handleSearch}
+          />
+        ) : null}
+        {!this.state.showSearchContainer ? <div><button onClick={this.toggleSearch}>Return to search</button></div> : null}
+        {this.state.ticketmasterSearchResults ? <div><button onClick={this.toggleMap}>{this.state.showMap ? `Show cards` : `Show map`}</button></div> : null}
+        {this.state.showCards ? (
+          <div>
+            <CardContainer
+              ticketmasterSearchResults={this.state.ticketmasterSearchResults}
+            />
+          </div>
+        ) : null}
         {this.state.showMap ? (
-          <div className="event-map">
             <EventMap
               ticketmasterSearchResults={this.state.ticketmasterSearchResults}
               eventLocations={this.state.eventLocations}
@@ -219,7 +179,6 @@ class App extends Component {
               mapZoom={this.state.mapZoom}
               mapCenter={this.state.mapCenter}
             />
-          </div>
         ) : null}
       </div>
     );
