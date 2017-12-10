@@ -3,9 +3,14 @@ import geohash from 'ngeohash'
 import PropTypes from 'prop-types'
 
 import EventMap from './EventMap'
+import Header from './Header'
 import SearchContainer from './SearchContainer'
 import CardContainer from './CardContainer'
 import './App.css';
+
+import tmLogo from './images/tmlogo_blue.png'
+import mapOn from './images/map-on.png'
+import mapOff from './images/map-off.png'
 
 class App extends Component {
   constructor(props) {
@@ -116,7 +121,8 @@ class App extends Component {
                 id: event.id,
                 images: event.images.map(image => image),
                 testEvent: event.pleaseNote,
-                url: event.url
+                url: event.url,
+                sourceLogo: tmLogo,
               }
             )
           })
@@ -168,7 +174,12 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <div className="app-container">
+          <Header
+            ticketmasterSearchResults={this.state.ticketmasterSearchResults}
+            showSearchContainer={this.state.showSearchContainer}
+            toggleSearch={this.toggleSearch}
+          />
         {this.state.showSearchContainer ? (
           <SearchContainer
             ticketmasterParameters={this.state.ticketmasterParameters}
@@ -178,8 +189,7 @@ class App extends Component {
             onChangeAddress={this.handleAddressChange}
           />
         ) : null}
-        {!this.state.showSearchContainer ? <div><button onClick={this.toggleSearch}>Return to search</button></div> : null}
-        {this.state.ticketmasterSearchResults ? <div><button onClick={this.toggleMap}>{this.state.showMap ? `Show cards` : `Show map`}</button></div> : null}
+        {this.state.ticketmasterSearchResults ? <div><img className="map-toggle" onClick={this.toggleMap} src={this.state.showMap ? mapOn : mapOff}/></div> : null}
         {this.state.showCards ? (
           <div>
             <CardContainer

@@ -8,17 +8,12 @@ const Map = ReactMapboxGl({
 });
 
 class EventMap extends Component {
-  constructor(props) {
-    super(props)
-
-    this.handleMarkerClick = this.handleMarkerClick.bind(this)
-  }
   state = {
     popupEvent: "",
 
   }
 
-  handleMarkerClick(eventId) {
+  handleMarkerClick = (eventId) => {
     const event = this.props.ticketmasterSearchResults.find(event => event.id === eventId)
     this.setState({
       popupEvent: event
@@ -33,10 +28,11 @@ class EventMap extends Component {
         style="mapbox://styles/mapbox/streets-v9"
         zoom={this.props.mapZoom}
         center={this.props.mapCenter}
+        className="map-styling"
         containerStyle={{
           position: 'relative',
           height: "500px",
-          width: "500px"
+          width: "300px",
         }}
       >
         <MapMarker

@@ -22,6 +22,7 @@ const Card = (props) => {
   return (
     <div className="event-container">
       <div className="event-title">{props.name}</div>
+      <div className="logo-container"><img className="source-logo" src={props.sourceLogo} alt="source logo"/></div>
       <div className="event-image-container"><img className="event-image" src={props.images[0].url} alt="event"/></div>
       <div className="event-what"><span className="card-heading">What:</span> {props.category} ({props.categorySpecific})</div>
       <div className="event-when"><span className="card-heading">When:</span> {formatTime(props.dateCode, props.timezone)}</div>
