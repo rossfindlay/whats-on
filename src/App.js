@@ -74,7 +74,7 @@ class App extends Component {
 
   getLatLng(city) {
     const searchCity = this.convertAddressString(city)
-    return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${searchCity}&key=AIzaSyAzrOM7kAMzsw20ihiShOBu13sN3wf-5Hw`)
+    return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${searchCity}&key={apikey}`)
       .then(response => response.json())
       .then(data => {
         console.log(data.results[0])
@@ -90,7 +90,7 @@ class App extends Component {
   }
 
   getTimezone(latlng) {
-    return fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${latlng.lat},${latlng.lng}&timestamp=1510657192&key=AIzaSyAzrOM7kAMzsw20ihiShOBu13sN3wf-5Hw`)
+    return fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${latlng.lat},${latlng.lng}&timestamp=1510657192&key={apikey}`)
       .then(response => response.json())
       .then(data => {
         return data.rawOffset
@@ -99,7 +99,7 @@ class App extends Component {
 
 
   getTicketmasterFeed(geoHash) {
-    fetch(`https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=${geoHash}&classificationName=${this.childRefs.selectedCategory.value}&startDateTime=${this.childRefs.startDateInput.value}T00:00:00Z&endDateTime=${this.childRefs.endDateInput.value}T23:59:00Z&radius=${this.childRefs.selectedRadius.value}&unit=${this.childRefs.selectedUnit.value}&size=100&page=0&sort=distance,asc&apikey=CsKQV0dhEPsfnwKyLuc6nmeQEfKyLrfe`)
+    fetch(`https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=${geoHash}&classificationName=${this.childRefs.selectedCategory.value}&startDateTime=${this.childRefs.startDateInput.value}T00:00:00Z&endDateTime=${this.childRefs.endDateInput.value}T23:59:00Z&radius=${this.childRefs.selectedRadius.value}&unit=${this.childRefs.selectedUnit.value}&size=100&page=0&sort=distance,asc&apikey={apikey}`)
       .then(results => results.json())
       .then(results => {
         console.log(results)
@@ -139,7 +139,7 @@ class App extends Component {
   }
 
   getTicketmasterEventInfo(id) {
-    fetch(`https://app.ticketmaster.com/discovery/v2/events/1AKZAG7GkdCeaV1.json?apikey=CsKQV0dhEPsfnwKyLuc6nmeQEfKyLrfe`)
+    fetch(`https://app.ticketmaster.com/discovery/v2/events/1AKZAG7GkdCeaV1.json?apikey={apikey}`)
       .then(results => results.json())
       .then(results => {
         console.log(results)
