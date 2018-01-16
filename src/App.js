@@ -11,6 +11,9 @@ import './App.css';
 import tmLogo from './images/tmlogo_blue.png'
 import mapOn from './images/map-on.png'
 import mapOff from './images/map-off.png'
+import loader from './images/loader.gif'
+
+import config from './config'
 
 class App extends Component {
   constructor(props) {
@@ -29,7 +32,7 @@ class App extends Component {
 
   state = {
     ticketmasterParameters: {
-      category: ["arts", "music", "sports"],
+      category: ["Arts", "Music", "Sports"],
       radius: ["5", "10", "25", "50"],
       unit: ["km", "miles"],
       startDateTime: "x",
@@ -37,6 +40,7 @@ class App extends Component {
     },
     ticketmasterSearchResults: [],
     latlng: {},
+    showLoader: false,
     showMap: false,
     showCards: true,
     showSearchContainer: true,
@@ -49,6 +53,7 @@ class App extends Component {
   }
 
   handleSearch() {
+    this.setState({showLoader: true})
     this.getLatLng(this.state.searchAddress)
       .then(latlngResponse => {
       return this.getTimezone(latlngResponse)
@@ -66,18 +71,15 @@ class App extends Component {
   }
 
   convertAddressString = (address) => {
-    console.log(`old address ${address}`)
     const newAddress = address.replace(/\s+/g, '+')
-    console.log(`new address ${newAddress}`)
     return newAddress
   }
 
   getLatLng(city) {
     const searchCity = this.convertAddressString(city)
-    return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${searchCity}&key={apikey}`)
+    return fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${searchCity}&key=AIzaSyAzrOM7kAMzsw20ihiShOBu13sN3wf-5Hw`)
       .then(response => response.json())
       .then(data => {
-        console.log(data.results[0])
       this.setState({
         latlng: data.results[0].geometry.location
       })
@@ -90,7 +92,7 @@ class App extends Component {
   }
 
   getTimezone(latlng) {
-    return fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${latlng.lat},${latlng.lng}&timestamp=1510657192&key={apikey}`)
+    return fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${latlng.lat},${latlng.lng}&timestamp=1510657192&key=AIzaSyAzrOM7kAMzsw20ihiShOBu13sN3wf-5Hw`)
       .then(response => response.json())
       .then(data => {
         return data.rawOffset
@@ -99,10 +101,9 @@ class App extends Component {
 
 
   getTicketmasterFeed(geoHash) {
-    fetch(`https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=${geoHash}&classificationName=${this.childRefs.selectedCategory.value}&startDateTime=${this.childRefs.startDateInput.value}T00:00:00Z&endDateTime=${this.childRefs.endDateInput.value}T23:59:00Z&radius=${this.childRefs.selectedRadius.value}&unit=${this.childRefs.selectedUnit.value}&size=100&page=0&sort=distance,asc&apikey={apikey}`)
+    fetch(`https://app.ticketmaster.com/discovery/v2/events.json?geoPoint=${geoHash}&classificationName=${this.childRefs.selectedCategory.value}&startDateTime=${this.childRefs.startDateInput.value}T00:00:00Z&endDateTime=${this.childRefs.endDateInput.value}T23:59:00Z&radius=${this.childRefs.selectedRadius.value}&unit=${this.childRefs.selectedUnit.value}&size=100&page=0&sort=distance,asc&apikey=CsKQV0dhEPsfnwKyLuc6nmeQEfKyLrfe`)
       .then(results => results.json())
       .then(results => {
-        console.log(results)
         if(results._embedded) {
           const events = results._embedded.events.map(event => {
             return (
@@ -131,6 +132,7 @@ class App extends Component {
             mapZoom: [10],
             mapCenter: [this.state.latlng.lng, this.state.latlng.lat],
             showSearchContainer: false,
+            showLoader: true,
           })
         } else {
           return console.log('no results')
@@ -139,7 +141,7 @@ class App extends Component {
   }
 
   getTicketmasterEventInfo(id) {
-    fetch(`https://app.ticketmaster.com/discovery/v2/events/1AKZAG7GkdCeaV1.json?apikey={apikey}`)
+    fetch(`https://app.ticketmaster.com/discovery/v2/events/1AKZAG7GkdCeaV1.json?apikey=CsKQV0dhEPsfnwKyLuc6nmeQEfKyLrfe`)
       .then(results => results.json())
       .then(results => {
         console.log(results)
@@ -189,6 +191,7 @@ class App extends Component {
             onChangeAddress={this.handleAddressChange}
           />
         ) : null}
+        {this.state.showLoader ? loader : null}
         {this.state.ticketmasterSearchResults ? <div><img className="map-toggle" onClick={this.toggleMap} src={this.state.showMap ? mapOn : mapOff}/></div> : null}
         {this.state.showCards ? (
           <div>

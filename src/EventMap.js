@@ -10,7 +10,24 @@ const Map = ReactMapboxGl({
 class EventMap extends Component {
   state = {
     popupEvent: "",
+    windowWidth: "",
+    windowHeight: "",
+  }
 
+  getWindowWidth = () => {
+      var e = window, a = 'inner';
+      if (!('innerWidth' in window)) {
+        a = 'client';
+        e = document.documentElement || document.body;
+      }
+      this.setState({
+        windowWidth : e[ a+'Width' ],
+        windowHeight : e[ a+'Height' ]
+      })
+  }
+
+  componentDidMount() {
+    this.getWindowWidth()
   }
 
   handleMarkerClick = (eventId) => {
@@ -21,7 +38,6 @@ class EventMap extends Component {
   }
 
   render() {
-    console.log(this.props.mapZoom)
     return (
     <div className="map-container">
       <Map
@@ -30,9 +46,8 @@ class EventMap extends Component {
         center={this.props.mapCenter}
         className="map-styling"
         containerStyle={{
-          position: 'relative',
           height: "500px",
-          width: "300px",
+          width: this.state.windowWidth,
         }}
       >
         <MapMarker

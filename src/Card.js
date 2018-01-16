@@ -21,12 +21,24 @@ const Card = (props) => {
 
   return (
     <div className="event-container">
-      <div className="event-title">{props.name}</div>
-      <div className="logo-container"><img className="source-logo" src={props.sourceLogo} alt="source logo"/></div>
-      <div className="event-image-container"><img className="event-image" src={props.images[0].url} alt="event"/></div>
-      <div className="event-what"><span className="card-heading">What:</span> {props.category} ({props.categorySpecific})</div>
-      <div className="event-when"><span className="card-heading">When:</span> {formatTime(props.dateCode, props.timezone)}</div>
-      <div className="event-cost"><span className="card-heading">How much:</span> {props.priceRange ? `${findCurrencyCode(props.priceRange[0].currency)}${props.priceRange[0].min}-${props.priceRange[0].max}` : `Not available`}</div>
+      <div className="row-one">
+        <div className="source-logo-container">
+          <img className="source-logo" src={props.sourceLogo} alt="source logo"/>
+        </div>
+        <div className="event-what">{props.category} ({props.categorySpecific})</div>
+      </div>
+      <div className="row-two">
+        <div className="event-title">{props.name}</div>
+      </div>
+      <div className="row-three">
+        <div className="event-when">{formatTime(props.dateCode, props.timezone)}</div>
+        <div className="event-cost"><span className="card-heading">Price:</span> {props.priceRange ? `${findCurrencyCode(props.priceRange[0].currency)}${props.priceRange[0].min}` : `Not available`}</div>
+      </div>
+      <div className="row-four">
+        <div className="buy-button-container">
+          <a className="buy-tickets" href={props.url}>Buy tickets</a>
+        </div>
+      </div>
     </div>
   )
 }

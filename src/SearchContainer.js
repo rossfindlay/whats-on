@@ -20,43 +20,47 @@ const SearchContainer = (props) => {
   return (
     <div className="search-container">
       <div className="search-form">
+        <label className="section-label-one">Place</label>
         <div className="form-section">
-          <label className="section-label">Place</label>
-          <div className="search-child">
+          <div className="search-child-one">
             <PlacesAutocomplete
               inputProps={inputProps}
               classNames={cssClasses}
             />
           </div>
         </div>
-        <div className="form-section">
-          <label className="section-label">From:</label>
-          <div className="search-child">
-            <input type="date" ref={ref => props.getSearchRef('startDateInput', ref)} defaultValue="2017-12-10"/>
-          </div>
-          <label className="section-label">To:</label>
-          <div className="search-child">
-            <input type="date" ref={ref => props.getSearchRef('endDateInput', ref)} defaultValue="2017-12-20"/>
-          </div>
+        <div className="two-label-holder">
+          <label className="section-label-two">From:</label>
+          <label className="section-label-two">To:</label>
         </div>
         <div className="form-section">
-          <label className="section-label">Category:</label>
-          <div className="search-child">
-            <select ref={ref => props.getSearchRef('selectedCategory', ref)} defaultValue="sports">
+          <div className="search-child-two">
+            <input type="date" ref={ref => props.getSearchRef('startDateInput', ref)} defaultValue="2018-01-04" className="date-input"/>
+          </div>
+          <div className="search-child-two">
+            <input type="date" ref={ref => props.getSearchRef('endDateInput', ref)} defaultValue="2018-01-30" className="date-input"/>
+          </div>
+        </div>
+          <label className="section-label-one">Category:</label>
+        <div className="form-section">
+          <div className="search-child-one">
+            <select ref={ref => props.getSearchRef('selectedCategory', ref)} defaultValue="Sports" className="category-input">
               {props.ticketmasterParameters.category.map(category => <option key={category}>{category}</option>)}
             </select>
           </div>
         </div>
+        <div className="two-label-holder">
+          <label className="section-label-two">Radius</label>
+          <label className="section-label-two">Unit</label>
+        </div>
         <div className="form-section">
-          <label className="section-label">Radius</label>
-          <div className="search-child">
-            <select ref={ref => props.getSearchRef('selectedRadius', ref)} defaultValue="25">
+          <div className="search-child-two">
+            <select ref={ref => props.getSearchRef('selectedRadius', ref)} defaultValue="25" className="radius-input">
               {props.ticketmasterParameters.radius.map(radius => <option key={radius}>{radius}</option>)}
             </select>
           </div>
-          <label className="section-label">Unit</label>
-          <div className="search-child">
-            <select ref={ref => props.getSearchRef('selectedUnit', ref)}>
+          <div className="search-child-two">
+            <select ref={ref => props.getSearchRef('selectedUnit', ref)} className="unit-input">
               {props.ticketmasterParameters.unit.map(unit => <option key={unit}>{unit}</option>)}
             </select>
           </div>
