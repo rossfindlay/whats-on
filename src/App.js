@@ -191,7 +191,7 @@ class App extends Component {
             onChangeAddress={this.handleAddressChange}
           />
         ) : null}
-        {this.state.showLoader ? loader : null}
+        {/* {this.state.showLoader ? loader : null} */}
         {this.state.ticketmasterSearchResults ? <div><img className="map-toggle" onClick={this.toggleMap} src={this.state.showMap ? mapOn : mapOff}/></div> : null}
         {this.state.showCards ? (
           <div>
